@@ -72,7 +72,7 @@ A seguir é apresentado a lista de atividades para concepção do sistema propos
 
 - [x] 3.3. Criação de ambiente. 
 
-- [ ] 3.4. Estudo de conceitos. 
+- [x] 3.4. Estudo de conceitos. 
 
 - [x] 3.5. Análise de ferramentas voltadas ao bem-estar no Home Office. 
 
@@ -80,17 +80,17 @@ A seguir é apresentado a lista de atividades para concepção do sistema propos
 
 4. Desenvolvimento 
 
-- [ ] 4.1 Integração do impacto emocional no Home Office / IA 
+- [x] 4.1 Integração do impacto emocional no Home Office / IA 
 
-- [ ] 4.2. Desenvolvimento da aplicação 
+- [x] 4.2. Desenvolvimento da aplicação 
 
  
 
 5. Validação do projeto 
 
-- [ ] 5.1. Validação do que foi desenvolvido. 
+- [x] 5.1. Validação do que foi desenvolvido. 
 
-- [ ] 5.2. Ajustes no que foi desenvolvido. 
+- [x] 5.2. Ajustes no que foi desenvolvido. 
 
 - [ ] 5.3 Entrega do projeto 
 
