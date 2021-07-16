@@ -32,33 +32,36 @@ Abaixo iniciamos o estudo analisando questões de produtividade e foco no trabal
 
 import matplotlib.pyplot as plt
 import pandas as pd
-plt.rcParams["figure.figsize"] = (10, 5)
+plt.rcParams["figure.figsize"] = (20, 5)
 respostas_teste_1 = 'https://github.com/vittoria-thomasini/comportment-analytics-covid19/blob/main/Planilhas/Foco.csv?raw=true'
-foco_df = pd.read_csv(respostas_teste_1, delimiter=';')
-foco_df = foco_df.replace('Sim', 1)
-foco_df = foco_df.replace('Não', 0)
-display(foco_df)
+dados_df = pd.read_csv(respostas_teste_1, delimiter=';')
+dados_df = dados_df.replace('Sim', 1)
+dados_df = dados_df.replace('Não', 0)
+dados_df.head()
 
-display(foco_df.describe())
+display(dados_df.describe())
 
-foco_positivo_df=foco_df.loc[foco_df['Como você avalia o seu foco durante o trabalho de Home Office?'] > 3]
-produtividade_positivo_df=foco_df.loc[foco_df['Como você avalia a sua produtividade durante a pandemia?'] > 3]
-display(foco_positivo_df)
+filtroneutro = dados_df.loc[dados_df['Como você avalia o seu foco durante o trabalho de Home Office?'] == 3]
+filtrobom = dados_df.loc[dados_df['Como você avalia o seu foco durante o trabalho de Home Office?'] > 3]
+filtroruim = dados_df.loc[dados_df['Como você avalia o seu foco durante o trabalho de Home Office?'] < 3]
+neutras = filtroneutro['Como você avalia o seu foco durante o trabalho de Home Office?'].count()
+bom = filtrobom['Como você avalia o seu foco durante o trabalho de Home Office?'].count()
+ruim = filtroruim['Como você avalia o seu foco durante o trabalho de Home Office?'].count()
+resposta = ruim, neutras, bom
+resposta
 
-display(foco_positivo_df.describe())
-display(produtividade_positivo_df.describe())
-
-plt.plot(foco_positivo_df[["Como você avalia o seu foco durante o trabalho de Home Office?","Como você avalia a sua produtividade durante a pandemia?"]])
+grupos = ['Ruim', 'Neutro', 'Bom']
+plt.bar(grupos, resposta)
 plt.show()
 
-plt.plot(produtividade_positivo_df[["Como você avalia o seu foco durante o trabalho de Home Office?","Como você avalia a sua produtividade durante a pandemia?"]])
-plt.show
+foco = dados_df['Como você avalia o seu foco durante o trabalho de Home Office?']
 
-foco_df.groupby(produtividade_positivo_df["Como você avalia o seu foco durante o trabalho de Home Office?"]).count().plot(legend=False, grid=True)
+dados_df2 = dados_df.drop(columns=['Qual sua Idade?','Você trabalhou de casa durante a pandemia?','Você já exercia esse modelo de trabalho?','Você se vê e/ou pretende trabalhar remotamente no futuro?'])
+graf=dados_df2.groupby(foco).mean().plot(grid=True)
 
-foco_df.groupby(produtividade_positivo_df["Como você avalia o seu foco durante o trabalho de Home Office?"],).mean().plot( kind='bar')
-foco = foco_df.groupby(produtividade_positivo_df["Como você avalia a sua produtividade durante a pandemia?"]).mean().plot()
-#foco.legend(["No futuro pretende HO", "Fadiga", "Estresse", "Experiência"])
+#Alterei a legenda para se tornar mais legível
+graf.legend(["Adaptação", "Produtividade", "Foco", "Experiência"])
+graf.set(title="Agrupamento Foco")
 
 """
 
@@ -69,6 +72,7 @@ Após a analise do foco e produtividade em HomeOffice, partimos para o estudo da
 
 *   Como você avalia o seu nível de fadiga (Cansaço excessivo) durante o trabalho de Home Office?
 *   Como você avalia o seu nível de estresse durante o trabalho de Home Office?
+*   Como foi sua experiência em trabalhar em casa?
 
 """
 
@@ -78,8 +82,8 @@ import matplotlib as matplt
 matplt.rcParams["figure.figsize"] = (10, 5)
 
 respostas = 'https://github.com/vittoria-thomasini/comportment-analytics-covid19/blob/main/Planilhas/Saude%20mental.csv?raw=true'
-
 dados = pd.read_csv(respostas,  delimiter=';' )
+
 idade = dados['Qual sua Idade?']
 pandemia = dados['Você trabalhou de casa durante a pandemia?']
 futuro = dados['Você se vê e/ou pretende trabalhar remotamente no futuro?']
@@ -91,6 +95,9 @@ dados = dados.replace('Sim', 1)
 dados = dados.replace('Não', 0)
 dados.head()
 
+#Quantidade de valores não nulos
+dados.count()
+
 """Como todos os entrevistados responderam que trabalharam durante a pandemia em casa foi optado por desconsiderá-la."""
 
 dados = dados.drop(columns=['Você trabalhou de casa durante a pandemia?'])
@@ -98,20 +105,33 @@ dados.head()
 
 display(dados.describe())
 
+"""Por termos o resultado de 75% do entrevistados pretenderem trabalhar remotamente no futuro declararam que em grande maioria seu nível de fadiga foi muito bom , ou seja, baixa ou aceitável e seu nível de estresse também, o que podemos constatar avaliando que os entrevistados declararam que a sua experiência trabalhando em Home Office foi marjoritariamente muito boa."""
+
 futuro.value_counts()
 
-futuro.value_counts().plot.pie(autopct='%1.1f%%')
+futuro.value_counts().plot.pie(autopct='%1.1f%%');
 
-dados.groupby(fadiga).count().plot(legend=False, grid=True)
+dados.groupby(fadiga).count().plot(legend=False, grid=True, color='green',title='Nível de fadiga' );
 
-dados.groupby(estresse).count().plot(legend=False, grid=True)
+dados.groupby(estresse).count().plot(legend=False, grid=True, color='red', title='Nível de estresse');
 
-dados.groupby(experiencia).count().plot(legend=False, grid=True)
+dados.groupby(experiencia).count().plot(legend=False, grid=True, color='purple', title='Avaliação da experiência');
 
-compara = dados.groupby(idade).mean().plot()
+compara = dados.groupby(idade).mean().plot();
 
-#Alterei a legenda para se tornar mais legível
-compara.legend(["No futuro pretende HO", "Fadiga", "Estresse", "Experiência"])
+compara.legend(["No futuro pretende HO", "Fadiga", "Estresse", "Experiência"]);
+
+#@title Percentagem de Nível de Fadiga
+explode = (0.1, 0, 0, 0, 0) 
+fadiga.value_counts().plot.pie(autopct='%1.1f%%', explode=explode );
+
+#@title Percentagem de Nível de Estresse
+explode = (0.1, 0, 0, 0, 0) 
+estresse.value_counts().plot.pie(autopct='%1.1f%%', explode=explode);
+
+#@title Percentagem de Avaliação de Experiência
+explode = (0.1, 0, 0, 0, 0) 
+experiencia.value_counts().plot.pie(autopct='%1.1f%%', explode=explode);
 
 """## **Relação do trabalhador com a empresa**
 
@@ -128,13 +148,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 respostasgu = pd.read_csv('https://raw.githubusercontent.com/vittoria-thomasini/comportment-analytics-covid19/main/Planilhas/Empresa.csv', delimiter = ';')
-respostasgu
+respostasgu.head()
 
 """- Abaixo subistutimos todas as respostas de "Sim" e "Não" por 0 e 1, considerando que respostas "Sim" correspondem a 1 e respostas "Não" correspodem a 0. Fizemos isso pois fica mais fácil de tratar os dados com números apenas."""
 
 respostasgu = respostasgu.replace('Sim', 1)
 respostasgu = respostasgu.replace('Não', 0)
-respostasgu
+respostasgu.head()
 
 """Gerando histogramas para cada uma das respostas relevantes do formulário."""
 
@@ -153,11 +173,9 @@ bom = filtrobom['Como você avalia o entrosamento com seus colegas de trabalho d
 ruim = filtroruim['Como você avalia o entrosamento com seus colegas de trabalho durante Home Office?'].count()
 resposta = neutras, bom, ruim
 resposta
-#plt.pie(resposta)
 
 grupos = ['Neutro', 'Bom', 'Ruim']
-valores = [36, 81, 36]
-plt.bar(grupos, valores)
+plt.bar(grupos, resposta)
 plt.show()
 
 """Da mesma forma que no entrosamento, usamos o mesmo código e conceitos para avaliar o auxilio/suporte da empresa."""
@@ -170,11 +188,9 @@ bom = filtrobom['Como você avalia o suporte/auxílio que a sua empresa prestou 
 ruim = filtroruim['Como você avalia o suporte/auxílio que a sua empresa prestou durante o trabalho de Home Office? '].count()
 resposta = neutras, bom, ruim
 resposta
-#plt.pie(resposta)
 
 grupos = ['Neutro', 'Bom', 'Ruim']
-valores = [37, 83, 33]
-plt.bar(grupos, valores)
+plt.bar(grupos, resposta)
 plt.show()
 
 """## **Relação entre Idades e Respostas**
@@ -185,7 +201,7 @@ Por fim, antes de analisarmos os dados gerais, concluimos que seria bom filtrar 
 import pandas as pd
 
 respostas = pd.read_csv('https://github.com/vittoria-thomasini/comportment-analytics-covid19/blob/main/Planilhas/Idades.csv?raw=true', delimiter = ';')
-respostas
+respostas.head()
 
 respostas = respostas.replace('Menos de 18 anos', '-18')
 respostas = respostas.replace('Entre 18 e 25 anos', '18-25')
@@ -199,7 +215,7 @@ respostas = respostas.replace('Não', 0)
 import matplotlib.pyplot as plt
 
 plt.hist(respostas["Qual sua Idade?"])
-print("Gráfico idades")
+plt.title("Gráficos idades")
 plt.show()
 
 print('Total de Pessoas que trabalharam remotamente durante a pandemia')
@@ -332,7 +348,7 @@ print('Idade das pessoas que tiveram seu nível de fadíga aumentado')
 plt.hist(filtro5_3["Qual sua Idade?"])
 plt.show()
 
-"""Seção final
+"""<h2>Seção final</h2>
 
 Perfís definidos:
 
@@ -384,14 +400,12 @@ perfis = homeoffice, hibrido, presencial
 perfis
 
 grupos = ['Homeoffice', 'Híbrido', 'Presencial']
-valores = [57, 79, 17]
-plt.bar(grupos, valores)
+plt.bar(grupos, perfis)
 plt.show()
 
-valores = [57, 79, 17]
 labels = ['Homeoffice', 'Híbrido','Presencial']
 explode = (0, 0.1, 0) 
-plt.pie(valores,labels=labels, autopct='%1.1f%%', explode=explode)
+plt.pie(perfis, labels=labels, autopct='%1.1f%%', explode=explode)
 plt.show()
 
 """
